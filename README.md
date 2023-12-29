@@ -8,7 +8,7 @@ I've been learning to code for 1 year and I currently know game developing, usin
 
 * 🌍  I'm based in Bucharest
 * ✉️  You can contact me at [andrei.greblaru@gmail.com](mailto:andrei.greblaru@gmail.com)
-* 🚀  I'm currently working on [A action game](http:///)
+* 🚀  I'm currently working on [An action game](http:///)
 * 🧠  I'm learning Java, Lua and Algorithms and Data structures using JavaScript
 * 🤝  I'm open to collaborating on projects
 * ⚡  I love challanges and projects
