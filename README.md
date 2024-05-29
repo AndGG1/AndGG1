@@ -1,7 +1,7 @@
 Hi ![](https://user-images.githubusercontent.com/18350557/176309783-0785949b-9127-417c-8b55-ab5a4333674e.gif)My name is Grebla Andrei
 =====================================================================================================================================
 
-backend Software Engineer
+Back-end Software Engineer
 --------------------------
 
 I'm Andrei, a Software Engineer in the making. I've been learning to code for the past 5 months and I do know the foundation of Data Strcutures and Algorithms, I'm close to be fluent in Java and I have a little experience with SQL. 
