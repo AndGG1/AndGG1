@@ -1,15 +1,15 @@
 Hi ![](https://user-images.githubusercontent.com/18350557/176309783-0785949b-9127-417c-8b55-ab5a4333674e.gif)My name is Grebla Andrei
 =====================================================================================================================================
 
-back-end game developer
------------------------
+backend Software Engineer
+--------------------------
 
-I've been learning to code for 1 year and I currently know game developing, using Lua and a little bit of Java. I want to go further and learn a lot more to become a back-end web dev. at a company from FAANG, so I put all my energy to learn as much as possible and learn a lot of new languages like Python, C++ and some JavaScript for front-end.
+I'm Andrei, a Software Engineer in the making. I've been learning to code for the past 5 months and I do know the foundation of Data Strcutures and Algorithms, I'm close to be fluent in Java and I have a little experience with SQL. 
 
 * 🌍  I'm based in Bucharest
 * ✉️  You can contact me at [andrei.greblaru@gmail.com](mailto:andrei.greblaru@gmail.com)
-* 🚀  I'm currently working on [An action game](http:///)
-* 🧠  I'm learning Java, Lua and Algorithms and Data structures using JavaScript
+* 🚀  I'm currently working on Open-Source
+* 🧠  I'm learning Java, Algorithms and Data structures using JavaScript and SQL.
 * 🤝  I'm open to collaborating on projects
 * ⚡  I love challanges and projects
 
