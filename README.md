@@ -4,7 +4,7 @@ Hi ![](https://user-images.githubusercontent.com/18350557/176309783-0785949b-912
 Back-end Software Engineer
 --------------------------
 
-I'm Andrei, a Software Engineer in the making. I've been learning to code for the past 5 months and I do know the foundation of Data Strcutures and Algorithms, I'm close to be fluent in Java and I have a little experience with SQL. 
+I'm Andrei, a Software Engineer in the making. I've been learning to code for the past 5 months and I do know the foundation of Data Strcutures and Algorithms, I'm close to be fluent in Java and I have a little experience with SQL. I have proven until now rare qualities like communications, creativity, ambition and a hard work ethic from a young age.
 
 * 🌍  I'm based in Bucharest
 * ✉️  You can contact me at [andrei.greblaru@gmail.com](mailto:andrei.greblaru@gmail.com)
