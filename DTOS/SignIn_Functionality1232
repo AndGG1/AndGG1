@@ -1,0 +1,362 @@
+package DTOS;
+
+import Client.Person;
+import Server.ServerView;
+import com.mysql.cj.jdbc.MysqlDataSource;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.net.URL;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.time.LocalTime;
+import java.util.Properties;
+
+
+public class SingInView {
+
+    public SingInView() throws SQLException{
+
+        final String[] imgPath = {""};
+
+        JFrame frame = new JFrame();
+        frame.setVisible(true);
+        frame.setSize(1000, 1000);
+        frame.setResizable(true);
+        frame.setLocationRelativeTo(null);
+        frame.setLayout(null);
+        frame.getContentPane().setBackground(Color.LIGHT_GRAY);
+
+        JTextField nameBar = new JTextField();
+        nameBar.setBackground(Color.GRAY);
+        nameBar.setForeground(Color.BLACK);
+        nameBar.setFont(new Font("Arial", Font.BOLD, 25));
+        nameBar.setHorizontalAlignment(JTextField.CENTER);
+        nameBar.setOpaque(true);
+        nameBar.setText("...");
+        nameBar.setFocusable(true);
+
+        JLabel nameLabel = new JLabel();
+        nameLabel.setBackground(Color.GRAY);
+        nameLabel.setForeground(Color.BLACK);
+        nameLabel.setFont(new Font("Arial", Font.BOLD, 25));
+        nameLabel.setHorizontalAlignment(JLabel.CENTER);
+        nameLabel.setText("Name:");
+        nameLabel.setOpaque(true);
+
+        JLabel linkLabel = new JLabel();
+        linkLabel.setBackground(Color.GRAY);
+        linkLabel.setForeground(Color.BLACK);
+        linkLabel.setFont(new Font("Arial", Font.BOLD, 25));
+        linkLabel.setHorizontalAlignment(JLabel.CENTER);
+        linkLabel.setText("Link to Profile:");
+        linkLabel.setOpaque(true);
+
+        JTextField profileBar = new JTextField();
+        profileBar.setBackground(Color.GRAY);
+        profileBar.setForeground(Color.BLACK);
+        profileBar.setFont(new Font("Arial", Font.BOLD, 25));
+        profileBar.setHorizontalAlignment(JTextField.CENTER);
+        profileBar.setOpaque(true);
+        profileBar.setText("...");
+
+        JLabel iconLabel = new JLabel();
+        iconLabel.setBackground(Color.GRAY);
+        iconLabel.setOpaque(true);
+        iconLabel.setText("Add Image");
+        iconLabel.setHorizontalAlignment(JTextField.CENTER);
+
+        JLabel optionLabel = new JLabel();
+        optionLabel.setBackground(Color.GRAY);
+        optionLabel.setForeground(Color.BLACK);
+        optionLabel.setFont(new Font("Arial", Font.BOLD, 25));
+        optionLabel.setHorizontalAlignment(JLabel.CENTER);
+        optionLabel.setText("Status:");
+        optionLabel.setOpaque(true);
+
+        JPopupMenu popupMenu = new JPopupMenu();
+        popupMenu.setBackground(Color.GRAY);
+        popupMenu.setForeground(Color.BLACK);
+        popupMenu.setFont(new Font("Arial", Font.BOLD, 25));
+        popupMenu.setToolTipText("What are you?");
+        popupMenu.setOpaque(true);
+
+        JLabel linkLabel2 = new JLabel();
+        linkLabel2.setBackground(Color.GRAY);
+        linkLabel2.setForeground(Color.BLACK);
+        linkLabel2.setFont(new Font("Arial", Font.BOLD, 25));
+        linkLabel2.setHorizontalAlignment(JLabel.CENTER);
+        linkLabel2.setText("Password:");
+        linkLabel2.setOpaque(true);
+
+        JPasswordField passwordField = new JPasswordField();
+        passwordField.setBackground(Color.GRAY);
+        passwordField.setForeground(Color.BLACK);
+        passwordField.setFont(new Font("Arial", Font.BOLD, 25));
+        passwordField.setHorizontalAlignment(JTextField.CENTER);
+        passwordField.setOpaque(true);
+
+        JButton confirmButton = new JButton();
+        confirmButton.setBackground(Color.GRAY);
+        confirmButton.setForeground(Color.BLACK);
+        confirmButton.setFont(new Font("Arial", Font.BOLD, 25));
+        confirmButton.setHorizontalAlignment(JLabel.CENTER);
+        confirmButton.setText("Create Account");
+        confirmButton.setOpaque(true);
+
+        Image img = null;
+        ImageIcon imgIcon;
+        try {
+            img = ImageIO.read(new URL("https://th.bing.com/th/id/R.a8a755d9bf3c1035e35fe32f88431927?rik=BBGPRYmQR0MxsQ&riu=http" +
+                    "%3a%2f%2fwww.pawcampus.com%2fimages%2fUpdateContactInfoico(2).png&ehk=xVKUdbE7Wo%2bx0Y2SL8g1k7dCLosEgtgo7vx2JN7qZaY%3d&risl=&pid=ImgRaw&r=0"));
+            System.out.println();
+        } catch (IOException e) {
+            //Not handling
+        } finally {
+            assert img != null;
+            img.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
+            imgIcon = new ImageIcon(img.getScaledInstance(50, 50, Image.SCALE_SMOOTH));
+        }
+
+        JButton infoButton = new JButton(imgIcon);
+        infoButton.setBackground(Color.BLUE);
+        infoButton.setForeground(Color.WHITE);
+        infoButton.setFont(new Font("Arial", Font.BOLD, 35));
+        infoButton.setHorizontalAlignment(JLabel.CENTER);
+        infoButton.setOpaque(false);
+
+        final boolean[] hasName = {false};
+        final boolean[] hasPassword = {false};
+        final boolean[] hasProfileLink = {false};
+        final boolean[] hasIcon = {false};
+
+        nameBar.setBounds(250, 300, 750, 50);
+        nameLabel.setBounds(0, 300, 250, 50);
+        profileBar.setBounds(250, 350, 750, 50);
+        linkLabel.setBounds(0, 350, 250, 50);
+        iconLabel.setBounds(75, 25, 200, 250);
+        optionLabel.setBounds(465, 25, 250, 50);
+        passwordField.setBounds(250, 400, 750, 50);
+        linkLabel2.setBounds(0, 400, 250, 50);
+        confirmButton.setBounds(375, 750, 250, 50);
+        infoButton.setBounds(920, 900, 50, 50);
+
+        frame.add(nameBar);
+        frame.add(nameLabel);
+        frame.add(linkLabel);
+        frame.add(profileBar);
+        frame.add(iconLabel);
+        frame.add(optionLabel);
+        frame.add(passwordField);
+        frame.add(linkLabel2);
+        frame.add(confirmButton);
+        frame.add(infoButton);
+
+        String checkQuery = "SELECT username FROM storefront.users WHERE username = ?";
+        String NAME_ACCESS = null;
+        String PASS_ACCESS = null;
+
+        try {
+            Properties accessProperties = new Properties();
+            accessProperties.load(new FileInputStream("C:\\Users\\andre\\IdeaProjects\\demo\\Project-Poster\\src\\user.properties"));
+
+            NAME_ACCESS = accessProperties.getProperty("username");
+            PASS_ACCESS = accessProperties.getProperty("password");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        var ds = new MysqlDataSource();
+        ds.setServerName("localhost");
+        ds.setPort(3306);
+        ds.setUser(NAME_ACCESS);
+        ds.setPassword(PASS_ACCESS);
+
+        nameBar.addKeyListener(new KeyAdapter() {
+
+            @Override
+            public void keyTyped(KeyEvent e) {
+
+                String name = nameBar.getText();
+                try (Connection conn = ds.getConnection(); PreparedStatement ps = conn.prepareStatement(checkQuery)) {
+                    ps.setString(1, nameBar.getText());
+                    ps.executeQuery();
+                    var rs = ps.getResultSet();
+
+                    if (rs.isBeforeFirst()) {
+                        nameBar.setBackground(Color.GRAY);
+                        nameLabel.setBackground(Color.GRAY);
+                        hasName[0] = false;
+                    } else if (SignInFunctionality.checkName(name)) {
+                        nameBar.setBackground(Color.GREEN);
+                        nameLabel.setBackground(Color.GREEN);
+                        hasName[0] = true;
+                    } else {
+                        nameBar.setBackground(Color.GRAY);
+                        nameLabel.setBackground(Color.GRAY);
+                        hasName[0] = false;
+                    }
+
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+
+        nameBar.addFocusListener(new FocusListener() {
+            public void focusGained(FocusEvent e) {
+                nameBar.setText("");
+            }
+
+            public void focusLost(FocusEvent e) {
+                if (nameBar.getText().isEmpty()) {
+                    nameBar.setText("...");
+                }
+            }
+        });
+
+        profileBar.addFocusListener(new FocusListener() {
+            public void focusGained(FocusEvent e) {
+                profileBar.setText("");
+            }
+
+            public void focusLost(FocusEvent e) {
+                if (profileBar.getText().isEmpty()) {
+                    profileBar.setText("...");
+                }
+            }
+        });
+
+        profileBar.addKeyListener(new KeyAdapter() {
+
+            @Override
+            public void keyTyped(KeyEvent e) {
+                String link = profileBar.getText();
+                System.out.println(profileBar.getText());
+                System.out.println(String.valueOf(profileBar.getText()));
+
+                if (SignInFunctionality.checkLink(link)) {
+                    profileBar.setBackground(Color.GREEN);
+                    linkLabel.setBackground(Color.GREEN);
+                    hasProfileLink[0] = true;
+                } else {
+                    profileBar.setBackground(Color.GRAY);
+                    linkLabel.setBackground(Color.GRAY);
+                    hasProfileLink[0] = false;
+                }
+            }
+        });
+
+        iconLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+
+                if (e.getButton() == 1) {
+                    JFileChooser fileChooser = new JFileChooser();
+                    fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+                    fileChooser.showOpenDialog(frame);
+
+                    File returnVal = fileChooser.getSelectedFile();
+
+                    if (returnVal.exists()) {
+                        try {
+                            Image img = ImageIO.read(new File(returnVal.getPath()));
+                            imgPath[0] = returnVal.getPath();
+                            if (img != null) {
+                                img = img.getScaledInstance(200, 250, Image.SCALE_SMOOTH);
+                                iconLabel.setIcon(new ImageIcon(img));
+
+                            } else {
+
+                                Image img2 = ImageIO.read(new URL("https://avatars.githubusercontent.com/u/154756433?v=4&size=64"));
+                                imgPath[0] = "N/A";
+                                img2 = img2.getScaledInstance(200, 250, Image.SCALE_SMOOTH);
+                                iconLabel.setIcon(new ImageIcon(img2));
+                            }
+                            iconLabel.setText("");
+
+                        } catch (IOException ex) {
+                            //Not handling
+                        }
+                        hasIcon[0] = true;
+                    } else hasIcon[0] = false;
+                }
+            }
+        });
+
+        passwordField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+
+                if (passwordField.getText().length() > 5) {
+                    passwordField.setBackground(Color.GREEN);
+                    linkLabel2.setBackground(Color.GREEN);
+                    hasPassword[0] = true;
+                } else {
+                    passwordField.setBackground(Color.GRAY);
+                    linkLabel2.setBackground(Color.GRAY);
+                    hasPassword[0] = false;
+                }
+            }
+        });
+
+        infoButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new InfoView();
+            }
+        });
+
+        confirmButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (hasName[0] && hasPassword[0] && hasProfileLink[0] && hasIcon[0]) {
+
+                    new ServerView(LocalTime.now(), new Person(nameBar.getText(), String.valueOf(passwordField.getPassword()), imgPath[0], "N/A", profileBar.getText()));
+                    frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+                }
+            }
+        });
+    }
+}
+
+class InfoView {
+
+    public InfoView() {
+
+        JFrame frame2 = new JFrame();
+        frame2.setVisible(true);
+        frame2.setSize(1000, 1000);
+        frame2.setResizable(true);
+        frame2.setLocationRelativeTo(null);
+        frame2.setLayout(null);
+        frame2.getContentPane().setBackground(Color.LIGHT_GRAY);
+
+        JTextArea textArea = new JTextArea(20, 40);
+        textArea.setBackground(Color.LIGHT_GRAY);
+        textArea.setFont(new Font("Arial", Font.BOLD, 35));
+        textArea.setWrapStyleWord(true);
+        textArea.setLineWrap(true);
+        textArea.setEditable(false);
+        textArea.setText("The following data is strictly required. For you to be able to register an account you need to have all the input data green(accepted).\n" +
+                "\n" +
+                "For the data to be green, you need to respect the following:\n" +
+                "\n" +
+                "USERNAME: Needs to be at least 3 letters long and it needs to differ from all the other registered names in the application. If someone already has your name, the input place will be grey.\n" +
+                "\n" +
+                "PASSWORD: needs to be at least 6 characters long\n" +
+                "\n" +
+                "PROFILE LINK: Pass a link that redirects the ones that will click it to your profile. We need to ask you to not put a link that redirects to a site considered harmful, 18+ content or ads.\n" +
+                "\n" +
+                "NOTE: Every time you join you will be required to enter your data to log-in.");
+        textArea.setFocusable(true);
+        textArea.setBounds(0, 0, 1000, 1000);
+        frame2.add(textArea);
+    }
+}
