@@ -1,0 +1,10 @@
+```
+package Client;
+
+import DTOS.Project;
+
+public sealed interface Functionality permits Person {
+    void addProject(Project project);
+    void removeProject(Project project);
+}
+```
