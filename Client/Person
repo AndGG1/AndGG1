@@ -1,0 +1,111 @@
+package Client;
+
+import DTOS.Project;
+import DTOS.SingInView;
+import Server.Container;
+import Server.ServerView;
+
+import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.net.Socket;
+import java.sql.SQLException;
+import java.time.LocalTime;
+
+public final class Person implements Runnable, Functionality {
+
+    //basic data
+    private Socket client;
+    private ServerView view;
+    private final LocalTime timeJoined;
+    private boolean finished;
+
+    public Person(String username, String password, String img_id, String status, String profileLink) {
+        //basic data
+        this.timeJoined = LocalTime.now();
+        this.view = null;
+        this.finished = false;
+        Container.getPersons().put(username, this);
+
+        Container.manageClientData(username, password, img_id, status, profileLink);
+
+       //cleaning data
+       username = "";
+       password = "";
+       img_id = "";
+       status = "";
+       profileLink = "";
+    }
+
+    public void throwMessage(Project project) {
+        System.out.println("Couldn't create project: " + project);
+    }
+
+    @Override
+    public void run() {
+
+        try {
+            client = new Socket("127.0.0.1", 1333);
+
+            FunctionalityHandler handler = new FunctionalityHandler(this);
+            Thread t = new Thread(handler);
+            t.start();
+
+        } catch (IOException e) {
+            //TODO - handle
+        }
+    }
+
+    public ServerView getView() {
+        return view;
+    }
+
+    public LocalTime getTimeJoined() {
+        return timeJoined;
+    }
+
+    @Override
+    public void addProject(Project project) {
+        Container.addProject(project);
+    }
+
+    @Override
+    public void removeProject(Project project) {
+        Container.removeProject(project);
+    }
+
+    public void shutdown() {
+        finished = true;
+        try {
+            this.view.getFrame().dispatchEvent(new WindowEvent(this.view.getFrame(),
+                    WindowEvent.WINDOW_CLOSING));
+            if (!client.isClosed()) {
+                client.close();
+            }
+        } catch (IOException e) {
+            //TODO: handle
+        }
+    }
+
+    public void setView(ServerView view) {
+        this.view = view;
+    }
+}
+
+class FunctionalityHandler implements Runnable {
+
+    private final Person person;
+
+    public FunctionalityHandler(Person person) {
+        this.person = person;
+    }
+
+    @Override
+    public void run() {
+        try {
+            new SingInView();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+}
+
