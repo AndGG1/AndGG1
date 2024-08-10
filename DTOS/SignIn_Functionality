@@ -1,0 +1,23 @@
+package DTOS;
+
+import Server.Container;
+public class SignInFunctionality {
+
+    protected static boolean checkName(String name) {
+        String name2 = name.trim();
+        return name2.length() <= 20 && name2.length() >= 3;
+    }
+
+    protected static boolean checkLink(String link) {
+        if (link.length() < 15) return false;
+
+        String s = link.split("//")[1];
+
+        if (s.contains("/")) {
+            if (s.contains(".com") || s.contains(".dev") || s.contains(".info") || s.contains("blog")) {
+                  return Container.valid_Hyper_Text_Transfer_Protocol(link);
+                }
+            }
+        return false;
+    }
+}
