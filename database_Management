@@ -1,0 +1,99 @@
+package Database_Managment;
+
+import com.mysql.cj.jdbc.MysqlDataSource;
+
+
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+public class Database_Initialization {
+    private final static String useSchema = "USE storefront";
+
+    public static void main(String[] args) {
+
+        var ds = new MysqlDataSource();
+        ds.setServerName("localhost");
+        ds.setPort(3306);
+        ds.setUser("And_GG");
+        ds.setPassword("ER86Yt42");
+
+        try (Connection conn = ds.getConnection()) {
+
+            DatabaseMetaData metaData = conn.getMetaData();
+            ds.setContinueBatchOnError(false);
+            System.out.println("---SQL State Type: " + metaData.getSQLStateType() + "---");
+
+            if (!checkDB(conn)) {
+                setupSchema(conn);
+                System.out.println(":)");
+            } else System.out.println(":(");
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static boolean checkDB(Connection conn) throws SQLException {
+
+        try (Statement st = conn.createStatement()) {
+            st.execute(useSchema);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("SQLState: " + e.getSQLState());
+            System.err.println("Error Code: " + e.getErrorCode());
+            System.err.println("Message: " + e.getMessage());
+
+            if (conn.getMetaData().getDatabaseProductName().equals("MySQL") && e.getErrorCode() == 1049) {
+                return false;
+            }
+            throw e;
+        }
+        return true;
+    }
+
+    private static void setupSchema(Connection conn) throws SQLException {
+
+        final String CREATE_SCHEMA = "CREATE SCHEMA storefront";
+
+        final String CREATE_USERS = """
+                CREATE TABLE storefront.users (
+                      username VARCHAR(255) NOT NULL,
+                      password VARCHAR(255) NOT NULL,
+                      link VARCHAR(255) NOT NULL,
+                      img VARCHAR(255) NOT NULL,
+                      status VARCHAR(255) NOT NULL,
+                      user_id INT NOT NULL AUTO_INCREMENT,
+                      PRIMARY KEY (user_id)
+                  );
+                """;
+
+        final String CREATE_PROJECTS = """
+                CREATE TABLE storefront.projects (
+                     project_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                     link VARCHAR(255) NOT NULL,
+                     name VARCHAR(255) NOT NULL,
+                     description VARCHAR(255),
+                     user_id INT DEFAULT NULL,
+                     CONSTRAINT FK_USERID FOREIGN KEY (user_id) REFERENCES,
+                     storefront.users (user_id) ON DELETE CASCADE
+                 );
+                """;
+
+        try (Statement st = conn.createStatement()) {
+            st.execute(CREATE_SCHEMA);
+            if (checkDB(conn)) {
+                st.addBatch(CREATE_USERS);
+                st.addBatch(CREATE_PROJECTS);
+                st.executeBatch();
+                System.out.println("Successfully Created the USERS TABLE!");
+                System.out.println("Successfully Created the PROJECTS TABLE!");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
