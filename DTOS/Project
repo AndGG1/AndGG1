@@ -1,0 +1,68 @@
+package DTOS;
+
+import Client.Person;
+import Server.Container;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+public class Project {
+    private final String link;
+    private int id;
+    private String name;
+    private String description;
+    private final Person owner;
+    private int likes;
+
+    public Project(String link, String name, String description, Person owner) {
+        this.link = link;
+        this.name = name;
+        this.description = description;
+        this.owner = owner;
+        this.likes = 0;
+
+        if (!Container.checkAbilityToCreate(id, link) || Container.getIds().contains(id) || Container.getLinks().contains(link)) {
+            owner.throwMessage(this);
+        } else {
+            Container.getIds().add(this.id);
+            Container.getLinks().add(this.link);
+        }
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Person getOwner() {
+        return owner;
+    }
+
+    public int getLikes() {
+        return likes;
+    }
+
+    public void setLikes(int likes) {
+        this.likes = likes;
+    }
+
+    protected ArrayList<Object> transferData() {
+        return new ArrayList<>(List.of(link, id, name, description, owner));
+    }
+
+    @Override
+    public String toString() {
+        return "%s - %d likes (id:%010d)".formatted(name, likes, id);
+    }
+}
