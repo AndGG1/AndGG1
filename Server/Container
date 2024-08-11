@@ -1,0 +1,144 @@
+package Server;
+
+import Client.Person;
+import DTOS.Project;
+import com.mysql.cj.jdbc.MysqlDataSource;
+
+import javax.swing.*;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.Socket;
+import java.net.URL;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.*;
+
+public final class Container {
+
+    private static int clientId = 0;
+    private static Set<Integer> ids = new LinkedHashSet<>();
+    private static Set<String> links = new LinkedHashSet<>();
+    private static Map<String, Project> projects = new HashMap<>();
+    private static Map<String, Person> persons = new HashMap<>();
+    private static Map<Integer, Socket> clients = new LinkedHashMap<>();
+
+
+    public static boolean checkAbilityToCreate(int id, String link)  {
+        if (!ids.contains(id) && !links.contains(link) && link.startsWith("https://") || link.startsWith("http://")) {
+            return valid_Hyper_Text_Transfer_Protocol(link);
+        }
+        return false;
+    }
+    public static boolean valid_Hyper_Text_Transfer_Protocol(String httpToCheck) {
+
+        try {
+            URL url = new URL(httpToCheck);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.connect();
+
+            if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                return true;
+            }
+
+        } catch (IOException e) {
+
+            //TODO - handle
+        }
+        return false;
+    }
+
+    public static void addProject(Project project) {
+        // TODO - remake
+        projects.putIfAbsent(project.getName().toUpperCase(), project);
+
+        for (var p : persons.values()) {
+            JTextArea text = p.getView().getTextArea();
+            text.setText(text.getText() + "\n " + project);
+        }
+    }
+
+    public static void removeProject(Project project) {
+        // TODO - remake
+        projects.remove(project.getName().toUpperCase());
+
+        for (var p : persons.values()) {
+            String[] text = p.getView().getTextArea().getText().split("\\R");
+            for (String s : text) {
+                if (s.toUpperCase().trim().startsWith(project.getName().toUpperCase())) {
+                    Arrays.asList(text).remove(s);
+                } else {
+                    JTextArea textArea = p.getView().getTextArea();
+                    textArea.setText(textArea + "\n" + s);
+                }
+            }
+        }
+    }
+
+    public static boolean manageClientData(String username, String password, String iconId, String status, String profileLink) {
+
+        var ds = new MysqlDataSource();
+        ds.setServerName("localhost");
+        ds.setPort(3306);
+        ds.setUser("And_GG");
+        ds.setPassword("ER86Yt42");
+
+        try (Connection conn = ds.getConnection(); Statement st = conn.createStatement()) {
+
+            String query = "SELECT * FROM storefront.users";
+            st.execute(query);
+            var rs = st.getResultSet();
+
+            while (rs.next()) {
+                String val = rs.getString("username");
+                String val2 = rs.getString("password");
+                if (val != null && val.equals(username) && val2 != null && val2.equals(password)) {
+                    return true;
+                }
+            }
+
+            String[] joinedValues = {username, password, profileLink, iconId, status};
+            String insertQuery = "INSERT INTO storefront.users (username, password, link, img, status) VALUES (?, ?, ?, ?, ?)";
+            PreparedStatement ps = conn.prepareStatement(insertQuery);
+
+            for (int i = 1; i <= joinedValues.length; i++) {
+                ps.setString(i, joinedValues[i-1]);
+            }
+            ps.executeUpdate();
+            return false;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
+
+    public static Set<Integer> getIds() {
+        return ids;
+    }
+
+    public static Set<String> getLinks() {
+        return links;
+    }
+
+    public static Map<String, Project> getProjects() {
+        return projects;
+    }
+
+    public static Map<String, Person> getPersons() {
+        return persons;
+    }
+
+    public static Map<Integer, Socket> getClients() {
+        return clients;
+    }
+
+    public static int getClientId() {
+        return clientId;
+    }
+
+    public static void setClientId(int clientId) {
+        Container.clientId = clientId;
+    }
+}
