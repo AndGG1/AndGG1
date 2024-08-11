@@ -1,0 +1,88 @@
+package Server;
+
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+
+public final class Server_CORE implements Runnable {
+    private ArrayList<ConnectionHandler> connections;
+    private ServerSocket server;
+    private boolean finished;
+    private ExecutorService threadPool;
+
+    public Server_CORE() {
+        this.connections = new ArrayList<>();
+        this.finished = false;
+    }
+
+    @Override
+    public void run() {
+
+            try {
+                server = new ServerSocket(1333);
+                threadPool = Executors.newCachedThreadPool();
+
+                while (!finished) {
+                    Socket client = server.accept();
+                    ConnectionHandler handler = new ConnectionHandler(client);
+                    connections.add(handler);
+                    threadPool.execute(handler);
+                }
+
+            } catch (IOException e) {
+                shutdown();
+            }
+    }
+    private void shutdown() {
+        try {
+            finished = false;
+            if (!server.isClosed()) {
+                server.close();
+            }
+            for (ConnectionHandler c : connections) {
+                c.shutIndividualClientDown();
+            }
+
+        } catch (IOException e) {
+            //Ignore - The server is closed, so whatever was the result of the
+            // exception is gone so we can't do anything about it
+        }
+    }
+}
+
+
+class ConnectionHandler implements Runnable {
+    private final Socket client;
+    public ConnectionHandler(Socket client) {
+        this.client = client;
+    }
+
+    @Override
+    public void run() {
+        int id = Container.getClientId() + 1;
+        Container.setClientId(id);
+        Container.getClients().put(id, client);
+    }
+
+    public void shutIndividualClientDown() {
+        //TODO - handle closing op. like shutting down the ServerView Window
+        System.out.println("Closed ServerView");
+
+        try {
+            if (!client.isClosed()) {
+                client.close();
+            }
+        } catch (IOException e) {
+            // Ignore - Same reason as the one for the server
+        }
+    }
+
+    public static void main(String[] args) {
+        Server_CORE server = new Server_CORE();
+        server.run();
+    }
+}
