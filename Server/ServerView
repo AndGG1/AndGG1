@@ -1,0 +1,144 @@
+package Server;
+
+import Client.Person;
+import DTOS.ProjectView;
+import javax.swing.*;
+import javax.swing.text.BadLocationException;
+import java.awt.*;
+import java.awt.event.*;
+import java.time.LocalTime;
+import java.util.Arrays;
+import java.util.Comparator;
+public class ServerView {
+
+    private final JTextArea textArea;
+    private final JFrame frame;
+    public ServerView(LocalTime time, Person persons) {
+
+        //Main part of the interface
+        frame = new JFrame();
+        frame.setVisible(true);
+        frame.setSize(1000, 1000);
+        frame.setResizable(false);
+        frame.setLocationRelativeTo(null);
+        frame.setLayout(new BorderLayout());
+
+        JTextField searchBar = new JTextField();
+        searchBar.setBackground(Color.GRAY);
+        searchBar.setForeground(Color.BLACK);
+        searchBar.setFont(new Font("Arial", Font.BOLD, 25));
+        searchBar.setHorizontalAlignment(JTextField.CENTER);
+        searchBar.setOpaque(true);
+        searchBar.setText("Search for a project...");
+        searchBar.setFocusable(true);
+
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BorderLayout());
+        mainPanel.add(searchBar);
+        frame.add(mainPanel, BorderLayout.NORTH);
+
+
+        //Scroll interface
+        textArea = new JTextArea(20, 40);
+        textArea.setBackground(Color.GRAY);
+        textArea.setFont(new Font("Arial", Font.BOLD, 35));
+        textArea.setWrapStyleWord(true);
+        textArea.setLineWrap(true);
+        textArea.setEditable(false);
+
+        JScrollPane scrollPane = new JScrollPane(textArea,
+                JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        frame.add(scrollPane, BorderLayout.CENTER);
+
+
+        //Server data interface
+        JLabel dataLabel = new JLabel();
+        dataLabel.setBackground(Color.GRAY);
+        dataLabel.setForeground(Color.BLACK);
+        dataLabel.setFont(new Font("Arial", Font.BOLD, 25));
+        dataLabel.setHorizontalAlignment(JTextField.CENTER);
+        dataLabel.setOpaque(true);
+        dataLabel.setText("port: 1333 | Joined the app at: " + time.toString().substring(0, 8));
+
+        JPanel dPanel = new JPanel();
+        dPanel.setLayout(new BorderLayout());
+        dPanel.add(dataLabel);
+        frame.add(dPanel, BorderLayout.SOUTH);
+
+        searchBar.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+
+                if (e.getKeyChar() == KeyEvent.VK_ENTER) {
+                    if (Container.getProjects().containsKey(searchBar.getText().toUpperCase())) {
+                        frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+                        new ProjectView(Container.getProjects().get(searchBar.getText().toUpperCase()));
+                    }
+                } else if (e.getKeyChar() == KeyEvent.VK_DELETE) {
+                    e.consume();
+                }
+
+                if (searchBar.getText().isEmpty()) {
+                    searchBar.setText("Search for a project...");
+                    Container.getProjects().forEach((k, v) -> textArea.setText(textArea.getText() + "\n" + k + " | " + v));
+                } else if (searchBar.getText().length() > "Search for a project".length() && e.getKeyChar() != '\b') {
+                    searchBar.setText("");
+                }
+
+                checkSearchBar(searchBar);
+            }
+        });
+
+        textArea.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getButton() != 1) return;
+
+                try {
+                    int line = textArea.getLineOfOffset(textArea.getCaretPosition());
+                    String line_String = textArea.getText().split("\n")[line];
+                    int index = line_String.split(" ")[0].isEmpty() ? 1 : 0;
+
+                    frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+                    new ProjectView(Container.getProjects().get(line_String.split(" ")[index].toUpperCase()));
+
+                } catch (BadLocationException ex) {
+                    // TODO - handle
+                }
+            }
+        });
+    }
+
+    public JTextArea getTextArea() {
+        return textArea;
+    }
+
+    public JFrame getFrame() {
+        return frame;
+    }
+
+    private void checkSearchBar(JTextField searchBar) {
+
+        String[] rows = textArea.getText().split("\\R");
+        for (int i = 0; i < rows.length; i++) {
+            rows[i] = rows[i].trim().split(" ")[0];
+        }
+
+        /*
+        System.out.println(Arrays.toString(rows));
+        System.out.println(textArea.getText());
+        System.out.println(Container.getProjects());
+         */
+
+        textArea.setText("");
+        Arrays.sort(rows, Comparator.naturalOrder());
+        for (var p : Container.getProjects().keySet()) {
+            if (p.startsWith(searchBar.getText().toUpperCase())) {
+                textArea.setText(textArea.getText() + "\n" + Container.getProjects().get(p).toString());
+            }
+        }
+
+        //TODO - implement Stream instead for more robust and concise code
+    }
+}
